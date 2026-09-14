@@ -1,23 +1,31 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  // Bug B11: usa horário local do servidor sem timezone definido
-  // B3 hora de Brasília = UTC-3, mas new Date().getHours() usa o timezone do servidor
-  const hora = new Date().getHours(); // Bug B11: deveria usar timezone de Brasília
+  const partes = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+
+  const hora = Number(partes.find(parte => parte.type === "hour")?.value);
+  const minuto = Number(partes.find(parte => parte.type === "minute")?.value);
+  const minutosAgora = hora * 60 + minuto;
 
   // Horário de funcionamento da B3: 10h–17h30 (horário de Brasília)
-  const abertura = 10;
-  const fechamento = 17;
+  const abertura = 10 * 60;
+  const fechamento = 17 * 60 + 30;
+  const horarioFormatado = `${String(hora).padStart(2, "0")}:${String(minuto).padStart(2, "0")}`;
 
-  const isAberto = hora >= abertura && hora < fechamento;
+  const isAberto = minutosAgora >= abertura && minutosAgora < fechamento;
 
   return NextResponse.json({
     status: isAberto ? "aberto" : "fechado",
-    hora: hora,
+    hora: horarioFormatado,
     mensagem: isAberto
-      ? `Mercado aberto — ${hora}h`
-      : `Mercado fechado — abre às ${abertura}h`,
-    abertura,
-    fechamento,
+      ? `Mercado aberto — ${horarioFormatado}`
+      : "Mercado fechado — abre às 10:00",
+    abertura: "10:00",
+    fechamento: "17:30",
   });
 }
