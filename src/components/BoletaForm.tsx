@@ -9,16 +9,16 @@ export default function BoletaForm({ acao }: Props) {
   const [quantidade, setQuantidade] = useState(""); // Bug B14: string, não number
   const [enviado, setEnviado] = useState(false);
 
-  const total = Number(quantidade) * acao.preco || 0;
+  const total = Number(quantidade) * acao.regularMarketPrice || 0;
 
   async function handleCompra() {
     await fetch("/api/ordens", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        ticker: acao.ticker,
+        ticker: acao.symbol,
         quantidade: Number(quantidade),
-        preco: acao.preco,
+        preco: acao.regularMarketPrice,
         total,
         tipo: "compra",
       }),
@@ -38,11 +38,11 @@ export default function BoletaForm({ acao }: Props) {
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <div>
           <label style={{ fontSize: "0.75rem", color: "#888" }}>Ativo</label>
-          <div style={{ fontSize: "1.1rem", fontWeight: 700 }}>{acao.ticker}</div>
+          <div style={{ fontSize: "1.1rem", fontWeight: 700 }}>{acao.symbol}</div>
         </div>
         <div>
           <label style={{ fontSize: "0.75rem", color: "#888" }}>Preço atual</label>
-          <div style={{ fontSize: "1.1rem" }}>R$ {acao.preco.toFixed(2)}</div>
+          <div style={{ fontSize: "1.1rem" }}>R$ {acao.regularMarketPrice.toFixed(2)}</div>
         </div>
         <div>
           <label style={{ fontSize: "0.75rem", color: "#888", display: "block", marginBottom: "0.25rem" }}>Quantidade</label>

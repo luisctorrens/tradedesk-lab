@@ -22,7 +22,7 @@ export async function GET(
     }
     return NextResponse.json(data.results[0]); // retorna raw brapi
   } catch {
-    const acao = ACOES_MOCK.find(a => a.ticker === ticker.toUpperCase());
+    const acao = ACOES_MOCK.find(a => a.symbol === ticker.toUpperCase());
     if (!acao) {
       return NextResponse.json(
         { error: `Ativo ${ticker.toUpperCase()} não encontrado` },

@@ -1,7 +1,8 @@
 import Link from "next/link";
+import type { Acao } from "@/types/acao";
 
 export default async function AcoesPage() {
-  let acoes: any[] = [];
+  let acoes: Acao[] = [];
   try {
     const res = await fetch("http://localhost:3000/api/acoes", { cache: "no-store" });
     const data = await res.json();
@@ -25,17 +26,17 @@ export default async function AcoesPage() {
           </tr>
         </thead>
         <tbody>
-          {acoes.map((acao: any) => (
-            <tr key={acao.symbol ?? acao.ticker} style={{ borderBottom: "1px solid #1a1a1a" }}>
-              <td style={{ padding: "1rem", fontWeight: 700, color: "#f59e0b" }}>{acao.symbol ?? acao.ticker}</td>
-              <td style={{ padding: "1rem", color: "#888", fontSize: "0.85rem" }}>{acao.shortName ?? acao.nome}</td>
-              <td style={{ padding: "1rem", textAlign: "right" }}>R$ {(acao.regularMarketPrice ?? acao.preco)?.toFixed(2) ?? "—"}</td>
-              <td style={{ padding: "1rem", textAlign: "right" }} className={(( acao.regularMarketChangePercent ?? acao.variacao) ?? 0) >= 0 ? "positivo" : "negativo"}>
-                {((acao.regularMarketChangePercent ?? acao.variacao) ?? 0) >= 0 ? "▲" : "▼"} {Math.abs((acao.regularMarketChangePercent ?? acao.variacao) ?? 0).toFixed(2)}%
+          {acoes.map(acao => (
+            <tr key={acao.symbol} style={{ borderBottom: "1px solid #1a1a1a" }}>
+              <td style={{ padding: "1rem", fontWeight: 700, color: "#f59e0b" }}>{acao.symbol}</td>
+              <td style={{ padding: "1rem", color: "#888", fontSize: "0.85rem" }}>{acao.shortName}</td>
+              <td style={{ padding: "1rem", textAlign: "right" }}>R$ {acao.regularMarketPrice.toFixed(2)}</td>
+              <td style={{ padding: "1rem", textAlign: "right" }} className={acao.regularMarketChangePercent >= 0 ? "positivo" : "negativo"}>
+                {acao.regularMarketChangePercent >= 0 ? "▲" : "▼"} {Math.abs(acao.regularMarketChangePercent).toFixed(2)}%
               </td>
-              <td style={{ padding: "1rem", textAlign: "right", color: "#888", fontSize: "0.8rem" }}>{((acao.regularMarketVolume ?? acao.volume) ?? 0).toLocaleString("pt-BR")}</td>
+              <td style={{ padding: "1rem", textAlign: "right", color: "#888", fontSize: "0.8rem" }}>{acao.regularMarketVolume.toLocaleString("pt-BR")}</td>
               <td style={{ padding: "1rem" }}>
-                <Link href={`/acoes/${acao.symbol ?? acao.ticker}`} style={{ background: "#1a2a1a", border: "1px solid #22c55e", color: "#22c55e", padding: "0.35rem 0.75rem", borderRadius: 4, textDecoration: "none", fontSize: "0.8rem" }}>
+                <Link href={`/acoes/${acao.symbol}`} style={{ background: "#1a2a1a", border: "1px solid #22c55e", color: "#22c55e", padding: "0.35rem 0.75rem", borderRadius: 4, textDecoration: "none", fontSize: "0.8rem" }}>
                   Ver →
                 </Link>
               </td>
