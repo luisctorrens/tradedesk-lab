@@ -22,13 +22,19 @@ export async function GET(
     }
     return NextResponse.json(data.results[0]); // retorna raw brapi
   } catch {
-    const acao = ACOES_MOCK.find(a => a.symbol === ticker.toUpperCase());
-    if (!acao) {
+    const acaoEncontrada = ACOES_MOCK.find(a => a.symbol === ticker.toUpperCase());
+    if (!acaoEncontrada) {
       return NextResponse.json(
         { error: `Ativo ${ticker.toUpperCase()} não encontrado` },
         { status: 404 }
       );
     }
+
+    const acao = {
+      ...acaoEncontrada,
+      lastChecked: new Date().toISOString(),
+    };
+
     return NextResponse.json(acao);
   }
 }
